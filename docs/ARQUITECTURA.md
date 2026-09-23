@@ -12,9 +12,11 @@ services/warehouses.js
         ▼
 GET /api/almacenes   { fuente, parametros, origen, almacenes: [{ key, original, ubicacion, logistica }] }
         ▼
-frontend js/data/adapter.js   original → modelo de vista (área/precio interpretados, tipología, búsqueda…)
+frontend/assets/js/data/adapter.js   original → modelo de vista (compartido por Mapa y Radar)
         ▼
-main.js ──► map (marcadores + clustering) · filtros · búsqueda · lista · panel · ficha
+Mapa:  main.js ──► map (marcadores + clustering) · filtros · búsqueda · lista · panel · ficha
+Radar: main.js ──► table.js (filtros por encabezado) · analytics.js (KPIs, gráficos, pivote)
+                   └─► GET/PUT /api/revisiones  (estado + comentario por almacén)
         │
         └─► GET /api/ruta?origen=lat,lon&destino=lat,lon&perfil=auto|camion
                  services/routing.js → caché → providers/routing/{osrm|ors} → providers/traffic
@@ -30,6 +32,7 @@ main.js ──► map (marcadores + clustering) · filtros · búsqueda · lista
 | `GET /api/origen` | Planta principal con su ubicación resuelta |
 | `GET /api/ruta?origen=&destino=&perfil=` | Distancia, tiempo vía libre, tiempo estimado (factor), geometría GeoJSON |
 | `GET /api/geocodificar?direccion=` | Dirección → coordenadas (Nominatim, caché permanente, 1 req/s) |
+| `GET /api/revisiones` · `PUT /api/revisiones/:clave` | Estado de evaluación y comentario por almacén. Solo JSON, mismo origen, estado validado |
 | `GET /api/config` | Perfiles de vehículo disponibles y proveedores activos (sin credenciales) |
 
 Las coordenadas se validan dentro de un rectángulo que abarca Perú, lo que evita usar la API para consultas ajenas a la plataforma.
@@ -54,8 +57,13 @@ Un proveedor con tráfico real (Google Routes, TomTom, HERE) se agrega como nuev
 - Las rutas se piden solo al presionar **Ver ruta** y se cachean en memoria (sesión) y en disco (30 días).
 - La geocodificación solo se ejecuta para registros sin coordenadas; hoy son 0.
 
+## Visualización
+
+- Modalidad: paleta categórica validada (3 tonos, todas las parejas, fondo oscuro) + forma del marcador como codificación secundaria (círculo alquiler, anillo venta, rombo referencia).
+- Rangos de tiempo: escala ordinal de un solo tono azul (`frontend/assets/js/data/bands.js`), compartida por Mapa y Radar; siempre acompañada de su etiqueta. Se descartó el semáforo verde/ámbar/rojo porque no es distinguible para daltonismo deuteranópico.
+
 ## Módulos originales
 
-Los módulos originales se cargan dentro de iframes persistentes (`frontend/assets/js/shell.js`), sin tocar su código. El estado en memoria de "Control de Espacios" se conserva al cambiar de módulo.
+Los módulos se cargan dentro de iframes persistentes (`frontend/assets/js/shell.js`). El Almacén Los Olivos es el archivo original sin cambios; el Radar se muestra con su vista reestructurada y su archivo original sigue intacto como fuente de datos. `#/mapa/<clave>` abre el mapa en un almacén. El estado en memoria de "Control de Espacios" se conserva al cambiar de módulo.
 
-Nota: el guardado de revisiones y comentarios del Radar usa `window.claude` (almacenamiento de artefactos de claude.ai). Fuera de claude.ai funciona en modo local y así lo indica la propia página. Si se desea persistirlo, se puede exponer un endpoint en el backend sin modificar la data.
+El guardado de revisiones del Radar original dependía de `window.claude` (claude.ai); la vista reestructurada lo reemplaza con `/api/revisiones`.

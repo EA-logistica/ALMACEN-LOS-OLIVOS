@@ -5,7 +5,7 @@ Herramienta interna de Compras y Logística de **Plásticos Nacionales**. Reúne
 | Módulo | Ruta | Descripción |
 |---|---|---|
 | **Mapa de Almacenes** (nuevo) | `#/mapa` | Mapa interactivo de Perú centrado en Lima: almacenes, filtros, búsqueda, clustering y ruta desde la planta. |
-| Radar Naranjal | `#/radar` | Módulo original: tiempos desde la planta a cada almacén evaluado. **Fuente de datos de la plataforma.** |
+| Radar Naranjal | `#/radar` | Evaluación de almacenes candidatos: KPIs, proximidad vs. capacidad, resumen por distrito y tabla con filtro en cada encabezado, exportación CSV y seguimiento de evaluación. |
 | Almacén Los Olivos | `#/almacen` | Módulo original: plano a escala, costos y control de espacios. |
 
 ## Acceso directo
@@ -45,22 +45,24 @@ Opcional: copiar `.env.example` como `.env` para cambiar el puerto, exponer la p
 │   │   │   ├── geocoding/         nominatim.js (OpenStreetMap)
 │   │   │   ├── routing/           osrm.js · openrouteservice.js (camión)
 │   │   │   └── traffic/           factor fijo ×1.4 (criterio del Radar)
-│   │   ├── services/              locations · routing · warehouses
+│   │   ├── services/              locations · routing · warehouses · reviews
 │   │   ├── routes/api.js          Endpoints REST
 │   │   └── lib/                   http, caché JSON, throttle
 │   ├── storage/
 │   │   ├── coordenadas-manuales.json   Coordenadas exactas verificadas (editable)
 │   │   ├── logistica.json              Datos logísticos por almacén (editable)
+│   │   ├── revisiones.json             Estado y comentarios de evaluación (autogenerado, fuera de git)
 │   │   ├── integridad-originales.json  Huellas SHA-256 de los originales
 │   │   └── cache/                      Caché de geocodificación y rutas (autogenerado)
 │   └── scripts/verificar-integridad.js
 ├── frontend/
 │   ├── index.html                 Contenedor de la plataforma (navegación entre módulos)
-│   ├── assets/                    CSS y JS compartidos
+│   ├── assets/                    CSS y JS compartidos (api/, data/ adaptador y parsers, ui/format)
 │   ├── vendor/                    Leaflet 1.9.4 + Leaflet.markercluster 1.5.3 (locales)
 │   └── modules/
-│       ├── mapa-almacenes/        Módulo nuevo (HTML + css/ + js/{api,data,map,ui})
-│       ├── radar-naranjal/        radar_naranjal.html            (original, sin cambios)
+│       ├── mapa-almacenes/        Módulo nuevo (HTML + css/ + js/{map,ui})
+│       ├── radar-naranjal/        index.html + css/ + js/ (vista de evaluación)
+│       │                          radar_naranjal.html (original, sin cambios: fuente de datos)
 │       └── almacen-los-olivos/    layout almacen los olivos.html (original, sin cambios)
 └── docs/ARQUITECTURA.md           Detalle técnico, flujo de datos y cómo extender
 ```
@@ -86,6 +88,15 @@ La clave de cada almacén es la misma que usa el Radar (visible como **Código**
 ### Datos logísticos
 
 `backend/storage/logistica.json` está preparado (vacío) para cargar: zona logística, capacidad, vehículo permitido, acceso para tráiler/camión, altura libre, patio de maniobras, costo de transporte y cercanía a Panamericana Norte, Callao, puertos y vías principales. Tiempo y distancia desde la planta se toman de los datos existentes del Radar.
+
+## Radar Naranjal (evaluación)
+
+- **Tabla con filtro por encabezado** (⏷): lista de valores con conteo para columnas de texto categórico (distrito, modalidad, tipo, rango, estado, alertas), rango mín./máx. para numéricas (área, S/ o USD por m², km, minutos) y "contiene" para texto libre. Los filtros se combinan en cascada, se muestran como chips y gobiernan también los KPIs y gráficos.
+- **Orden** por cualquier columna, **columnas visibles** configurables y **exportación CSV** (abre en Excel) de la vista filtrada.
+- **Evaluación por almacén**: Pendiente → En evaluación → Visitado → Preseleccionado / Descartado, con comentario. Se guarda en el servidor (`backend/storage/revisiones.json`) y la ve todo el equipo.
+- **Alertas de dato** inferidas del propio anuncio: dato a verificar, precio por consultar, ubicación aproximada, sin contacto, sin anuncio.
+- **Ver en mapa** abre el Mapa de Almacenes con el almacén seleccionado.
+- Se retiró el "Mapa de trayectos" esquemático; las rutas se consultan en el Mapa de Almacenes. El archivo original `radar_naranjal.html` se conserva intacto como fuente de datos.
 
 ## Rutas y tiempos
 

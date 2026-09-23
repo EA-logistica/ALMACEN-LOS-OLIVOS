@@ -1,7 +1,7 @@
 // Panel de detalle del almacén seleccionado: datos, acciones y ruta desde Plásticos Nacionales.
 import { BAND_LABEL, COLORES } from '../config.js';
-import { haversineKm } from '../data/parsers.js';
-import { escapeHtml, FUENTE_UBICACION, fmtKm, fmtMin, fmtMoney, fmtNum, NA, orNA } from './format.js';
+import { haversineKm } from '/assets/js/data/parsers.js';
+import { escapeHtml, FUENTE_UBICACION, fmtKm, fmtMin, fmtMoney, fmtNum, NA, orNA } from '/assets/js/ui/format.js';
 
 export const gmapsDir = (o, d) =>
   `https://www.google.com/maps/dir/?api=1&origin=${o.lat},${o.lon}&destination=${d.lat},${d.lon}&travelmode=driving`;
@@ -78,7 +78,7 @@ export function renderWarehouseDetail(container, item, origin, ctx) {
     <header class="dt-head">
       <div class="badges">
         ${item.modalidad ? `<span class="tag tag-${escapeHtml(item.modalidad.toLowerCase())}">${escapeHtml(item.modalidad)}</span>` : ''}
-        ${item.band ? `<span class="tag" style="color:${bandColor};border-color:${bandColor}">${escapeHtml(BAND_LABEL[item.band])}</span>` : ''}
+        ${item.band ? `<span class="tag tag-band"><i style="background:${bandColor}"></i>${escapeHtml(BAND_LABEL[item.band])}</span>` : ''}
       </div>
       <button type="button" class="icon-btn" data-act="close" aria-label="Cerrar">✕</button>
     </header>

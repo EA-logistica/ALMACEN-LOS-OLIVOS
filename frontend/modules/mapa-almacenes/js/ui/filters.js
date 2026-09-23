@@ -1,8 +1,8 @@
 // Filtros del mapa. Operan sobre la misma colección de almacenes (sin duplicarla): devuelven el
 // conjunto de claves visibles, que se aplica a marcadores, lista y resumen.
 import { BAND_LABEL, COLORES } from '../config.js';
-import { normalize } from '../data/parsers.js';
-import { escapeHtml } from './format.js';
+import { normalize } from '/assets/js/data/parsers.js';
+import { escapeHtml } from '/assets/js/ui/format.js';
 
 const BANDS = ['ideal', 'moderado', 'maximo', 'fuera'];
 

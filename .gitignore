@@ -2,3 +2,4 @@
 node_modules/
 backend/storage/cache/*.json
 *.log
+backend/storage/revisiones.json

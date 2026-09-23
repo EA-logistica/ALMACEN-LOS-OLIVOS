@@ -91,9 +91,11 @@
 .res-warn { position: absolute; right: 8px; bottom: -2px; font: 500 9.5px var(--font-mono); color: var(--alert); }
 
 .tag { display: inline-block; font: 600 9.5px/1 var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; padding: 4px 6px; border-radius: 5px; border: 1px solid var(--border); color: var(--text-muted); white-space: nowrap; }
-.tag-alquiler { color: #7fb3ea; border-color: rgba(74, 144, 217, 0.5); background: rgba(74, 144, 217, 0.1); }
-.tag-venta { color: #e7b170; border-color: rgba(217, 149, 62, 0.5); background: rgba(217, 149, 62, 0.1); }
-.tag-referencia { color: var(--text-muted); }
+.tag-alquiler { color: #8cbaf0; border-color: rgba(57, 135, 229, 0.5); background: rgba(57, 135, 229, 0.12); }
+.tag-venta { color: #f09a74; border-color: rgba(217, 89, 38, 0.5); background: rgba(217, 89, 38, 0.12); }
+.tag-referencia { color: #5fcfa5; border-color: rgba(25, 158, 112, 0.5); background: rgba(25, 158, 112, 0.1); }
+.tag-band { display: inline-flex; align-items: center; gap: 5px; color: var(--text-muted); }
+.tag-band i { width: 8px; height: 8px; border-radius: 50%; }
 
 .sb-foot { padding: 12px 18px 16px; font-size: 10.5px; color: var(--text-dim); border-top: 1px solid var(--border-soft); line-height: 1.5; }
 

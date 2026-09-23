@@ -5,6 +5,9 @@ import { capabilities } from '../providers/routing/index.js';
 import { geocode, isInPeru, PERU_BOUNDS } from '../services/locations.js';
 import { computeRoute } from '../services/routing.js';
 import { getOrigin, getWarehouses } from '../services/warehouses.js';
+import { listReviews, saveReview } from '../services/reviews.js';
+
+const MAX_BODY = 16 * 1024;
 
 function parsePoint(value, name) {
   const [lat, lon] = String(value || '').split(',').map(Number);
@@ -12,7 +15,27 @@ function parsePoint(value, name) {
   return { lat, lon };
 }
 
-const routes = {
+// Solo JSON y solo desde la propia plataforma: un sitio externo no puede escribir (no se habilita CORS
+// y se exige Content-Type application/json, que obliga al navegador a una verificación previa).
+async function readJson(req) {
+  if (!/^application\/json\b/i.test(req.headers['content-type'] || '')) throw new HttpError(415, 'Se espera Content-Type: application/json');
+  const origin = req.headers.origin;
+  if (origin && new URL(origin).host !== req.headers.host) throw new HttpError(403, 'Origen no permitido');
+  let size = 0;
+  const chunks = [];
+  for await (const chunk of req) {
+    size += chunk.length;
+    if (size > MAX_BODY) throw new HttpError(413, 'Solicitud demasiado grande');
+    chunks.push(chunk);
+  }
+  try {
+    return JSON.parse(Buffer.concat(chunks).toString('utf8') || '{}');
+  } catch {
+    throw new HttpError(400, 'JSON inválido');
+  }
+}
+
+const getRoutes = {
   '/api/salud': () => ({ ok: true, hora: new Date().toISOString() }),
 
   '/api/config': () => ({
@@ -24,6 +47,8 @@ const routes = {
   '/api/almacenes': () => getWarehouses(),
 
   '/api/origen': () => getOrigin(),
+
+  '/api/revisiones': () => listReviews(),
 
   '/api/geocodificar': async (q) => {
     const direccion = (q.get('direccion') || '').trim();
@@ -39,8 +64,16 @@ const routes = {
 };
 
 export async function handleApi(req, res, url) {
+  const pathname = url.pathname.replace(/\/$/, '');
+
+  const review = pathname.match(/^\/api\/revisiones\/([A-Za-z0-9_-]{1,80})$/);
+  if (review) {
+    if (req.method !== 'PUT') throw new HttpError(405, 'Método no permitido');
+    return sendJson(req, res, 200, saveReview(review[1], await readJson(req)));
+  }
+
   if (req.method !== 'GET' && req.method !== 'HEAD') throw new HttpError(405, 'Método no permitido');
-  const handler = routes[url.pathname.replace(/\/$/, '')];
+  const handler = getRoutes[pathname];
   if (!handler) throw new HttpError(404, 'Endpoint no encontrado');
   sendJson(req, res, 200, await handler(url.searchParams));
 }

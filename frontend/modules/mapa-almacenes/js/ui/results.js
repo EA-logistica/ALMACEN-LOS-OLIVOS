@@ -1,6 +1,6 @@
 // Resumen de resultados y lista lateral.
 import { COLORES } from '../config.js';
-import { escapeHtml, fmtArea, fmtMin, fmtNum } from './format.js';
+import { escapeHtml, fmtArea, fmtMin, fmtNum } from '/assets/js/ui/format.js';
 
 export const SORTS = {
   tiempo: { label: 'Tiempo a planta', fn: (a, b) => (a.rutaRadar?.duracionAjustadaMin ?? 1e9) - (b.rutaRadar?.duracionAjustadaMin ?? 1e9) },

@@ -1,7 +1,7 @@
 // Ficha completa: TODOS los campos del registro original (tal cual existen), la ubicación resuelta
 // y la estructura logística preparada para análisis posterior.
-import { LOGISTICS_FIELDS } from '../data/logistics-schema.js';
-import { escapeHtml, FUENTE_UBICACION, fmtNum, NA, orNA } from './format.js';
+import { LOGISTICS_FIELDS } from '/assets/js/data/logistics-schema.js';
+import { escapeHtml, FUENTE_UBICACION, fmtNum, NA, orNA } from '/assets/js/ui/format.js';
 import { gmapsPin, pricingRows, streetView } from './detail.js';
 
 // Etiquetas legibles para los campos que ya existen en la data del Radar.

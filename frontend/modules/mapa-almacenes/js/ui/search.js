@@ -1,7 +1,7 @@
 // Búsqueda por nombre, dirección, distrito, zona, fuente o código (clave del registro).
 // Filtra en vivo y ofrece sugerencias; al elegir un resultado el mapa se desplaza a su ubicación.
-import { normalize } from '../data/parsers.js';
-import { escapeHtml } from './format.js';
+import { normalize } from '/assets/js/data/parsers.js';
+import { escapeHtml } from '/assets/js/ui/format.js';
 
 export function initSearch({ input, list, items, onQuery, onPick }) {
   let active = -1;

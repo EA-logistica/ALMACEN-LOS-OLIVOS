@@ -1,6 +1,6 @@
 // Implementación del contrato de mapa con Leaflet + Leaflet.markercluster (OpenStreetMap, sin costo).
 // Leaflet se carga como script global (window.L) desde /vendor.
-import { escapeHtml } from '../ui/format.js';
+import { escapeHtml } from '/assets/js/ui/format.js';
 
 const L = window.L;
 

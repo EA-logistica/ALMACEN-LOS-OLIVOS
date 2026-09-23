@@ -1,15 +1,15 @@
 // Orquestador del módulo "Mapa de Almacenes".
 // Flujo: almacén existente -> ubicación -> coordenadas -> marcador -> ficha -> filtros -> ruta.
-import { api } from './api/client.js';
+import { api } from '/assets/js/api/client.js';
 import { BAND_LABEL, BASE_LAYERS, COLORES, MAP_DEFAULTS, MAP_ENGINE, ZONAS } from './config.js';
-import { adaptPayload } from './data/adapter.js';
+import { adaptPayload } from '/assets/js/data/adapter.js';
 import { createMap } from './map/map-adapter.js';
 import { initialFilterState, matches, renderFilters } from './ui/filters.js';
 import { initSearch } from './ui/search.js';
 import { renderResults, renderStats, SORTS } from './ui/results.js';
 import { renderOriginDetail, renderWarehouseDetail } from './ui/detail.js';
 import { openFicha } from './ui/ficha.js';
-import { escapeHtml, fmtMin } from './ui/format.js';
+import { escapeHtml, fmtMin } from '/assets/js/ui/format.js';
 
 const $ = (id) => document.getElementById(id);
 const ORIGIN_KEY = '__origen__';
@@ -267,8 +267,13 @@ async function boot() {
   applyFilters();
   setStatus(null);
 
-  const deepLink = decodeURIComponent(location.hash.slice(1));
-  if (state.byKey.has(deepLink)) select(deepLink);
+  // Enlace directo: /modules/mapa-almacenes/#<código>. También lo usa el Radar ("Ver en mapa").
+  const openFromHash = () => {
+    const key = decodeURIComponent(location.hash.slice(1));
+    if (state.byKey.has(key) && key !== state.selected) select(key);
+  };
+  window.addEventListener('hashchange', openFromHash);
+  openFromHash();
 
   geocodeMissing();
 }

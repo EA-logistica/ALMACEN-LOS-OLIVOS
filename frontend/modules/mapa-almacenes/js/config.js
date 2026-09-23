@@ -1,6 +1,5 @@
 // Configuración del módulo "Mapa de Almacenes". Solo datos públicos: ninguna credencial vive en el frontend.
-
-export const API_BASE = '/api';
+import { BANDS } from '/assets/js/data/bands.js';
 
 // Proveedor de mapa activo (ver js/map/map-adapter.js). Cambiar aquí para usar otro motor.
 export const MAP_ENGINE = 'leaflet';
@@ -69,9 +68,10 @@ export const ZONAS = [
 // Paleta de marcadores.
 export const COLORES = {
   origen: '#E85D2B',
-  modalidad: { Alquiler: '#4A90D9', Venta: '#D9953E', Referencia: '#8B94A3' },
-  band: { ideal: '#3FA66B', moderado: '#D8A92E', maximo: '#E0703A', fuera: '#7A8494' },
+  // Paleta categórica validada (fondo oscuro, todas las parejas); la forma del marcador es la codificación secundaria.
+  modalidad: { Alquiler: '#3987e5', Venta: '#d95926', Referencia: '#199e70' },
+  band: Object.fromEntries(BANDS.map((b) => [b.id, b.color])),
   ruta: '#2F7DE1',
 };
 
-export const BAND_LABEL = { ideal: 'Ideal · hasta 10 min', moderado: 'Moderado · 10–20 min', maximo: 'Máximo · 20–30 min', fuera: 'Fuera de rango · +30 min' };
+export const BAND_LABEL = Object.fromEntries(BANDS.map((b) => [b.id, `${b.label} · ${b.rango}`]));
