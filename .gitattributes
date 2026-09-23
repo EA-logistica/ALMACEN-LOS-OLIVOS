@@ -1,0 +1,6 @@
+# Archivos originales: se versionan byte a byte (npm run verificar compara su SHA-256).
+frontend/modules/radar-naranjal/*.html -text
+frontend/modules/almacen-los-olivos/*.html -text
+
+# Ejecutores de Windows
+*.cmd text eol=crlf
